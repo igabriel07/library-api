@@ -1,12 +1,21 @@
 package com.library.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
 public class LoanRequest {
 
+    @NotNull
     private LocalDate loanDate;
+
+    @NotNull
     private LocalDate dueDate;
+
+    @NotNull
     private Long memberId;
+
+    @NotNull
     private Long bookId;
 
     public LoanRequest() {

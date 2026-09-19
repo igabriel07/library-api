@@ -108,6 +108,10 @@ The project uses PostgreSQL running in Docker.
 
 The database configuration is kept outside Git using environment variables, so local credentials are not committed to the repository.
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4155282 (Implement exception handling)
 ## Next steps
 
 Some things I plan to add as the project develops:

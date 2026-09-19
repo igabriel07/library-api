@@ -3,6 +3,7 @@ package com.library.controller;
 import com.library.dto.LoanRequest;
 import com.library.dto.LoanResponse;
 import com.library.service.LoanService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,7 +31,7 @@ public class LoanController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public LoanResponse createLoan(@RequestBody LoanRequest request) {
+    public LoanResponse createLoan(@Valid @RequestBody LoanRequest request) {
         return loanService.createLoan(request);
     }
 

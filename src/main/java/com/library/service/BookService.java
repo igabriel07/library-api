@@ -1,16 +1,18 @@
 package com.library.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
 import com.library.dto.BookRequest;
 import com.library.dto.BookResponse;
+import com.library.exception.ResourceNotFoundException;
 import com.library.model.Author;
 import com.library.model.Book;
 import com.library.model.Category;
 import com.library.repository.AuthorRepository;
 import com.library.repository.BookRepository;
 import com.library.repository.CategoryRepository;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class BookService {
@@ -36,18 +38,22 @@ public class BookService {
 
     public BookResponse getBookById(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
         return toResponse(book);
     }
 
     public BookResponse createBook(BookRequest request) {
 
+        if (request.getAvailableCopies() > request.getTotalCopies()) {
+            throw new IllegalArgumentException("Available copies cannot be greater than total copies");
+        }
+
         Author author = authorRepository.findById(request.getAuthorId())
-                .orElseThrow(() -> new RuntimeException("Author not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
 
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
 
         Book book = new Book();
 
@@ -62,6 +68,43 @@ public class BookService {
         Book savedBook = bookRepository.save(book);
 
         return toResponse(savedBook);
+    }
+
+    public BookResponse updateBook(Long id, BookRequest request) {
+
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+
+        if (request.getAvailableCopies() > request.getTotalCopies()) {
+            throw new IllegalArgumentException(
+                    "Available copies cannot be greater than total copies");
+        }
+
+        Author author = authorRepository.findById(request.getAuthorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found"));
+
+        Category category = categoryRepository.findById(request.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found"));
+
+        book.setTitle(request.getTitle());
+        book.setIsbn(request.getIsbn());
+        book.setPublicationYear(request.getPublicationYear());
+        book.setTotalCopies(request.getTotalCopies());
+        book.setAvailableCopies(request.getAvailableCopies());
+        book.setAuthor(author);
+        book.setCategory(category);
+
+        Book updatedBook = bookRepository.save(book);
+
+        return toResponse(updatedBook);
+    }
+
+    public void deleteBook(Long id) {
+
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+
+        bookRepository.delete(book);
     }
 
     private BookResponse toResponse(Book book) {

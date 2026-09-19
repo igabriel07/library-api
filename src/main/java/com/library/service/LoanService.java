@@ -13,6 +13,7 @@ import com.library.model.Member;
 import com.library.repository.BookRepository;
 import com.library.repository.LoanRepository;
 import com.library.repository.MemberRepository;
+import com.library.exception.ResourceNotFoundException;
 
 @Service
 public class LoanService {
@@ -38,21 +39,26 @@ public class LoanService {
 
     public LoanResponse getLoanById(Long id) {
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
 
         return toResponse(loan);
     }
 
     public LoanResponse createLoan(LoanRequest request) {
 
+        if (request.getDueDate().isBefore(request.getLoanDate())) {
+            throw new IllegalArgumentException(
+                    "Due date cannot be before loan date");
+        }
+
         Member member = memberRepository.findById(request.getMemberId())
-                .orElseThrow(() -> new RuntimeException("Member not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Member not found"));
 
         Book book = bookRepository.findById(request.getBookId())
-                .orElseThrow(() -> new RuntimeException("Book not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
         if (book.getAvailableCopies() <= 0) {
-            throw new RuntimeException("No available copies");
+            throw new IllegalArgumentException("No available copies");
         }
 
         Loan loan = new Loan();
@@ -74,10 +80,10 @@ public class LoanService {
     public LoanResponse returnLoan(Long id) {
 
         Loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Loan not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Loan not found"));
 
         if (loan.getStatus() == LoanStatus.RETURNED) {
-            throw new RuntimeException("Loan already returned");
+            throw new IllegalArgumentException("Loan already returned");
         }
 
         loan.setReturnDate(java.time.LocalDate.now());
