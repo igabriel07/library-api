@@ -2,7 +2,6 @@
 
 A simple REST API for managing a library, built with Java and Spring Boot.
 
-I built this project to practice backend development and get more hands-on experience with Spring Boot, JPA, PostgreSQL and REST APIs.
 
 ## What it does
 
