@@ -114,18 +114,32 @@ The API provides centralized exception handling for common errors, including:
 
 ## Automated Tests
 
-The project includes unit tests using JUnit and Mockito.
+The project includes automated tests using JUnit and Mockito.
 
-The service layer is tested for successful operations, validation/business rules and error scenarios, including:
+The service and controller layers are tested for successful operations, validation, business rules and error scenarios.
+
+The test suite currently covers:
 
 * Book creation, update and deletion
+* Book controller endpoints
 * Missing books, authors and categories
 * Invalid book copy counts
 * Loan creation and return
+* Loan controller endpoints
 * Unavailable books
 * Invalid loan dates
 * Missing members and books
 * Returning an already returned loan
+* Request validation
+* API error responses
+
+The full test suite currently contains **44 automated tests**.
+
+Run all tests with:
+
+```powershell
+.\gradlew test
+```
 
 ## Running the Project
 
@@ -178,6 +192,8 @@ Database credentials are stored in environment variables and are not committed t
 
 The PostgreSQL container uses host port `5433` to avoid conflicts with a local PostgreSQL installation.
 
+The test environment uses a separate test configuration to connect to the PostgreSQL database when running the Spring application context tests.
+
 ## Testing
 
 Run all automated tests with:
@@ -204,10 +220,11 @@ To build the project:
 
 Possible future improvements include:
 
-* Search by title or ISBN
-* Pagination
+* Search by title, ISBN or other book attributes
+* Pagination and sorting
 * More advanced filtering
 * Improved API documentation
 * Dockerizing the Spring Boot application
-* Additional controller/API integration tests
+* Additional integration tests
 * Transaction management
+* Database indexes and further database optimization
